@@ -1,5 +1,5 @@
 -- ==========================================
--- [Script Name]: Dead Roblox - HD Admin & Owner Panel
+-- [Script Name]: Dead Roblox - Real HD Admin Bridge
 -- [Creator]: viurstester505
 -- [Idea By]: zowb1
 -- ==========================================
@@ -10,11 +10,26 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Lighting = game:GetService("Lighting")
 local StarterGui = game:GetService("StarterGui")
-local SoundService = game:GetService("SoundService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- 1. واجهة الاعتمادات على اليمين
+-- دالة إرسال أمر شات حقيقي يتفاعل مع HD Admin في السيرفر
+local function runAdminCommand(cmd)
+    pcall(function()
+        -- محاولة إرسال الأمر عبر الشات لتنفذه لوحة HD Admin الحقيقية بالماب
+        local args = {
+            [1] = cmd,
+            [2] = "All"
+        }
+        -- البحث عن ريموت الشات أو HD Admin التنفيذي
+        if ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents") then
+            ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(cmd, "All")
+        end
+    end)
+end
+
+-- 1. واجهة الاعتمادات الرسمية على اليمين
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "DeadRoblox_HD_Hub"
+ScreenGui.Name = "DeadRoblox_HD_Commands"
 ScreenGui.Parent = game.CoreGui
 
 local CreditLabel = Instance.new("TextLabel")
@@ -24,19 +39,19 @@ CreditLabel.BackgroundTransparency = 0.2
 CreditLabel.Position = UDim2.new(1, -240, 0, 15)
 CreditLabel.Size = UDim2.new(0, 230, 0, 70)
 CreditLabel.Font = Enum.Font.Code
-CreditLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+CreditLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
 CreditLabel.TextSize = 13
 CreditLabel.TextWrapped = true
-CreditLabel.Text = "☠️ [DEAD ROBLOX HD ADMIN]\n👤 Creator: viurstester505\n💡 Idea: zowb1\n⚡ Mode: Owner Level"
+CreditLabel.Text = "☠️ [DEAD ROBLOX HD SYSTEM]\n👤 Creator: viurstester505\n💡 Idea: zowb1\n⚡ Status: Owner HD Bridge"
 
 Instance.new("UICorner", CreditLabel)
 
 -- 2. القائمة الرئيسية
 local MainFrame = Instance.new("Frame")
 MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-MainFrame.Position = UDim2.new(0.5, -180, 0.5, -200)
-MainFrame.Size = UDim2.new(0, 360, 0, 420)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+MainFrame.Position = UDim2.new(0.5, -180, 0.5, -220)
+MainFrame.Size = UDim2.new(0, 360, 0, 440)
 MainFrame.Active = true
 MainFrame.Draggable = true
 
@@ -49,14 +64,14 @@ Title.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
 Title.Font = Enum.Font.GothamBold
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 15
-Title.Text = "☠️ DEAD ROBLOX - HD CONTROL"
+Title.Text = "☠️ HD ADMIN - OWNER COMMANDS"
 
 local Scroll = Instance.new("ScrollingFrame")
 Scroll.Parent = MainFrame
 Scroll.Position = UDim2.new(0, 0, 0, 50)
 Scroll.Size = UDim2.new(1, 0, 1, -50)
 Scroll.BackgroundTransparency = 1
-Scroll.CanvasSize = UDim2.new(0, 0, 2.5, 0)
+Scroll.CanvasSize = UDim2.new(0, 0, 3.5, 0)
 
 local UIList = Instance.new("UIListLayout", Scroll)
 UIList.SortOrder = Enum.SortOrder.LayoutOrder
@@ -77,75 +92,55 @@ local function createBtn(text, color, callback)
     return btn
 end
 
--- ==================== الأزرار والوظائف ====================
+-- ==================== الأوامر الحقيقية المرتبطة بـ HD Admin ====================
 
--- 1. تشغيل HD Admin الحقيقي
-createBtn("👑 تشغيل HD Admin الحقيقي (HD Admin V2)", Color3.fromRGB(180, 0, 180), function()
-    pcall(function()
-        -- استدعاء سكربت HD Admin المباشر
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/bf94a11f/HD-Admin/main/Source.lua"))()
-        StarterGui:SetCore("SendNotification", {
-            Title = "HD Admin",
-            Text = "تم إعطاؤك رتبة HD Admin بنجاح! جرب كتابة الأوامر.",
-            Duration = 6
-        })
-    end)
+-- 1. إعطاء رتبة HD Admin لنفسك عبر أوامر الماب
+createBtn("👑 تفعيل رتبة HD Admin الرسمية (Rank Me)", Color3.fromRGB(160, 0, 160), function()
+    runAdminCommand(":rank me owner")
+    runAdminCommand(":admin me")
+    StarterGui:SetCore("SendNotification", {Title = "HD Admin", Text = "تم إرسال أمر تفعيل الأدمين للسيرفر!", Duration = 5})
 end)
 
--- 2. Btools حقيقية متوافقة
-createBtn("🛠️ أدوات البناء والحذف (Btools الشغالة)", Color3.fromRGB(0, 120, 200), function()
-    pcall(function()
-        local a = Instance.new("HopperBin", LocalPlayer.Backpack)
-        a.BinType = Enum.BinType.Hammer
-        local b = Instance.new("HopperBin", LocalPlayer.Backpack)
-        b.BinType = Enum.BinType.Clone
-        local c = Instance.new("HopperBin", LocalPlayer.Backpack)
-        c.BinType = Enum.BinType.Grab
-    end)
+-- 2. إعطاء أدوات Btools حقيقية عبر الأدمن
+createBtn("🛠️ إعطاء Btools الحقيقية (Tools All)", Color3.fromRGB(0, 110, 200), function()
+    runAdminCommand(":tools me")
+    runAdminCommand(":btools me")
 end)
 
--- 3. إرسال رسالة علوية للجميع
-createBtn("📢 إرسال إعلان إداري للجميع", Color3.fromRGB(200, 80, 0), function()
-    pcall(function()
-        StarterGui:SetCore("SendNotification", {
-            Title = "🚨 [إعلان HD Admin]",
-            Text = "المالك viurstester505 يسيطر على السيرفر!",
-            Duration = 8,
-        })
-    end)
+-- 3. طرد جميع اللاعبين حقيقي عبر أمر الأدمن
+createBtn("🚪 طرد جميع اللاعبين (HD Kick All)", Color3.fromRGB(220, 20, 20), function()
+    runAdminCommand(":kick all Dead Roblox Owner Control")
 end)
 
--- 4. صورة الشاشة للجميع
-createBtn("🖼️ إظهار صورة بملء الشاشة", Color3.fromRGB(180, 0, 0), function()
-    pcall(function()
-        local sgi = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
-        local img = Instance.new("ImageLabel", sgi)
-        img.Size = UDim2.new(1, 0, 1, 0)
-        img.Image = "rbxassetid://6023426915"
-        game:GetService("Debris"):AddItem(sgi, 5)
-    end)
+-- 4. قتل جميع اللاعبين في السيرفر
+createBtn("💀 قتل جميع اللاعبين (HD Kill All)", Color3.fromRGB(180, 50, 0), function()
+    runAdminCommand(":kill all")
 end)
 
--- 5. تشغيل صوت مزعج جداً
-createBtn("🔊 تشغيل الصوت المزعج", Color3.fromRGB(220, 20, 60), function()
-    pcall(function()
-        local sound = Instance.new("Sound", SoundService)
-        sound.SoundId = "rbxassetid://9069609208"
-        sound.Volume = 10
-        sound:Play()
-    end)
+-- 5. تطيير جميع اللاعبين في السماء
+createBtn("🌪️ تطيير جميع اللاعبين (HD Fling All)", Color3.fromRGB(120, 50, 200), function()
+    runAdminCommand(":fly all")
+    runAdminCommand(":ungrav all")
 end)
 
--- 6. تحويل الألوان للأحمر المرعب
-createBtn("🔴 تحويل ألوان السيرفر إلى أحمر", Color3.fromRGB(140, 0, 0), function()
-    Lighting.ClockTime = 0
+-- 6. تجميد حركة كل اللاعبين
+createBtn("🧊 تجميد حركة السيرفر (HD Freeze All)", Color3.fromRGB(0, 100, 100), function()
+    runAdminCommand(":freeze all")
+end)
+
+-- 7. إرسال رسالة تنبيه ضخمة لكل السيرفر
+createBtn("📢 إرسال رسالة إدارية كبرى (HD Message)", Color3.fromRGB(200, 120, 0), function()
+    runAdminCommand(":m [Dead Roblox] Owner viurstester505 & Idea zowb1 are controlling the server!")
+end)
+
+-- 8. تحويل ألوان السيرفر إلى أحمر دموي
+createBtn("🔴 تحويل ألوان السيرفر (HD Night/Red)", Color3.fromRGB(130, 0, 0), function()
+    runAdminCommand(":night")
     Lighting.Ambient = Color3.fromRGB(255, 0, 0)
     Lighting.OutdoorAmbient = Color3.fromRGB(255, 0, 0)
 end)
 
--- 7. سرعة المالك
-createBtn("⚡ سرعة المالك (250)", Color3.fromRGB(0, 150, 50), function()
-    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
-        LocalPlayer.Character.Humanoid.WalkSpeed = 250
-    end
+-- 9. سرعة المالك القصوى
+createBtn("⚡ سرعة المالك الخارقة (HD Speed)", Color3.fromRGB(0, 150, 50), function()
+    runAdminCommand(":speed me 250")
 end)
